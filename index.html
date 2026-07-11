@@ -4,46 +4,363 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plume Hunter Test</title>
+<title>Plume Hunter V5</title>
 
-https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
-
-<style>
-html, body {
-    margin: 0;
-    height: 100%;
+<link
+ rel="stylesheet"
+ href="https://unpkg.com/leaflet@1.9.4/disty{
+    margin:0;
+    height:100%;
+    font-family:Segoe UI,sans-serif;
+    background:#071018;
+    color:white;
 }
 
-#map {
-    width: 100%;
-    height: 100vh;
+#container{
+    display:flex;
+    height:100vh;
 }
+
+#map{
+    flex:2;
+}
+
+#panel{
+    flex:1;
+    background:#0b1622;
+    padding:15px;
+    overflow:auto;
+    border-left:2px solid cyan;
+}
+
+h2{
+    margin-top:0;
+    color:#7fe7ff;
+}
+
+button{
+    width:100%;
+    margin:4px 0;
+    padding:10px;
+    border:none;
+    background:#12344f;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1b527a;
+}
+
+#log{
+    height:220px;
+    overflow:auto;
+    background:black;
+    padding:8px;
+    font-size:12px;
+}
+
+.panel-title{
+    margin-top:10px;
+    color:#7fe7ff;
+}
+
+.hp{
+    color:#7fff99;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
 </style>
-
 </head>
 <body>
 
+<div id="container">
+
 <div id="map"></div>
 
-https://unpkg.com/leaflet@1.9.4/dist/leaflet.js
+<div id="panel">
+
+<h2>Plume Hunter</h2>
+
+<div class="hp">
+HP : <span id="hp">2</span>
+</div>
+
+<div class="panel-title">TIME</div>
+
+<button onclick="setDay(1)">DAY 1</button>
+<button onclick="setDay(2)">DAY 2</button>
+<button onclick="setDay(3)">DAY 3</button>
+
+<div class="panel-title">SENSOR</div>
+
+<button onclick="setSensor('RGB')">RGB</button>
+<button onclick="setSensor('NIR')">NIR</button>
+<button onclick="setSensor('FLOW')">FLOW</button>
+<button onclick="setSensor('NDVI')">NDVI</button>
+
+<div class="panel-title">RAID</div>
+
+<button onclick="raid('A')">Zone A</button>
+<button onclick="raid('B')">Zone B</button>
+<button onclick="raid('C')">Zone C</button>
+<button onclick="raid('D')">Zone D</button>
+
+<div class="panel-title">SYSTEM LOG</div>
+
+<div id="log"></div>
+
+</div>
+
+</div>
+
+let@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
-const map = L.map('map').setView(
+let currentDay=1;
+let currentSensor="RGB";
+let hp=2;
+
+const map=L.map("map").setView(
     [13.548,100.275],
     15
 );
 
 L.tileLayer(
-    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-        maxZoom: 19
+        maxZoom:19
     }
 ).addTo(map);
 
-L.marker([13.548,100.275])
+const layers=[];
+
+function addLayer(layer){
+    layer.addTo(map);
+    layers.push(layer);
+}
+
+function clearDynamicLayers(){
+    layers.forEach(layer=>{
+        map.removeLayer(layer);
+    });
+
+    layers.length=0;
+}
+
+const zoneA =
+L.marker([13.552,100.274])
 .addTo(map)
-.bindPopup('Plume Hunter Test');
+.bindPopup("Zone A");
+
+const zoneB =
+L.marker([13.549,100.279])
+.addTo(map)
+.bindPopup("Zone B");
+
+const zoneC =
+L.marker([13.548,100.271])
+.addTo(map)
+.bindPopup("Zone C");
+
+const zoneD =
+L.marker([13.544,100.275])
+.addTo(map)
+.bindPopup("Zone D");
+
+const fish =
+L.circleMarker(
+    [13.547,100.275],
+    {
+        radius:10,
+        color:"yellow"
+    }
+)
+.addTo(map)
+.bindPopup("Fish Cage");
+
+function log(text){
+    document.getElementById("log").innerHTML =
+        text + "<br>" +
+        document.getElementById("log").innerHTML;
+}
+
+function setDay(day){
+
+    currentDay=day;
+
+    log("DAY "+day);
+
+    render();
+}
+
+function setSensor(sensor){
+
+    currentSensor=sensor;
+
+    log("Sensor: "+sensor);
+
+    render();
+}
+
+function render(){
+
+    clearDynamicLayers();
+
+    if(currentDay===2 && currentSensor==="RGB"){
+
+        addLayer(
+            L.polygon(
+                [
+                    [13.551,100.269],
+                    [13.551,100.273],
+                    [13.547,100.273],
+                    [13.547,100.269]
+                ],
+                {
+                    color:"white",
+                    fillOpacity:0.5
+                }
+            )
+        );
+
+        addLayer(
+            L.polyline(
+                [
+                    [13.549,100.279],
+                    [13.548,100.277],
+                    [13.547,100.275]
+                ],
+                {
+                    color:"brown",
+                    weight:8
+                }
+            )
+        );
+    }
+
+    if(currentDay===2 && currentSensor==="NIR"){
+
+        addLayer(
+            L.polyline(
+                [
+                    [13.548,100.271],
+                    [13.5478,100.272],
+                    [13.5475,100.274],
+                    [13.547,100.275]
+                ],
+                {
+                    color:"black",
+                    weight:12
+                }
+            )
+        );
+    }
+
+    if(currentSensor==="FLOW"){
+
+        let color =
+            currentDay===3
+            ? "red"
+            : "cyan";
+
+        if(currentDay===3){
+
+            addLayer(
+                L.polyline(
+                    [
+                        [13.544,100.275],
+                        [13.547,100.275],
+                        [13.550,100.275]
+                    ],
+                    {
+                        color:color,
+                        weight:6,
+                        dashArray:"10,10"
+                    }
+                )
+            );
+        }
+        else{
+
+            addLayer(
+                L.polyline(
+                    [
+                        [13.550,100.275],
+                        [13.547,100.275],
+                        [13.544,100.275]
+                    ],
+                    {
+                        color:color,
+                        weight:6,
+                        dashArray:"10,10"
+                    }
+                )
+            );
+        }
+    }
+
+    if(currentDay===3 && currentSensor==="NDVI"){
+
+        addLayer(
+            L.polyline(
+                [
+                    [13.549,100.279],
+                    [13.546,100.278]
+                ],
+                {
+                    color:"lime",
+                    weight:8
+                }
+            )
+        );
+
+        addLayer(
+            L.polyline(
+                [
+                    [13.549,100.272],
+                    [13.546,100.271]
+                ],
+                {
+                    color:"red",
+                    weight:8
+                }
+            )
+        );
+    }
+}
+
+function raid(zone){
+
+    if(zone==="C"){
+
+        alert(
+            "MISSION COMPLETE\n\n"+
+            "ผู้ปล่อยน้ำเสียคือ Zone C\n"+
+            "พิสูจน์จาก NIR + FLOW + NDVI"
+        );
+
+        return;
+    }
+
+    hp--;
+
+    document.getElementById("hp")
+        .textContent=hp;
+
+    log("Raid incorrect : Zone "+zone);
+
+    if(hp<=0){
+
+        alert("GAME OVER");
+    }
+}
+
+render();
+
+log("System Online");
 
 </script>
 
