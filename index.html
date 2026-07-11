@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Plume Hunter</title>
+
+<link
+  rel="stylesheet"
+  href="https://let.css
+
+<style>
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#000;
+}
+
+#map{
+    width:100%;
+    height:100vh;
+}
+</style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script src=".com/leaflet@1.9.4/dist/leaflet.js>
+
+<script>
+
+const map = L.map("map").setView(
+    [13.548,100.275],
+    15
+);
+
+L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+        maxZoom:19
+    }
+).addTo(map);
+
+L.marker([13.5484,100.2715])
+.addTo(map)
+.bindPopup("Zone C");
+
+L.marker([13.5487,100.2785])
+.addTo(map)
+.bindPopup("Zone B");
+
+L.circleMarker(
+    [13.547,100.275],
+    {
+        radius:10,
+        color:"yellow"
+    }
+)
+.addTo(map)
+.bindPopup("Fish Cage");
+
+</script>
+
+</body>
+</html>
